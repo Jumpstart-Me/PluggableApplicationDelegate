@@ -19,7 +19,13 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     open var services: [ApplicationService] { return [] }
     private lazy var __services: [ApplicationService] = {
-        return self.services
+        let services = self.services
+        for service in (services as! [NSObject]) {
+            if service.responds(to: #selector(setter: UIApplicationDelegate.window)) {
+                service.perform(#selector(setter: UIApplicationDelegate.window), with: self.window)
+            }
+        }
+        return services
     }()
     
     @available(iOS 2.0, *)
