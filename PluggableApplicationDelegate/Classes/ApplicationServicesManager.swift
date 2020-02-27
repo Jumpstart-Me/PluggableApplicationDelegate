@@ -101,28 +101,6 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    @available(iOS, introduced: 2.0, deprecated: 9.0, message: "Please use application:openURL:options:")
-    open func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
-        var result = false
-        for service in __services {
-            if service.application?(application, handleOpen: url) ?? false {
-                result = true
-            }
-        }
-        return result
-    }
-    
-    @available(iOS, introduced: 4.2, deprecated: 9.0, message: "Please use application:openURL:options:")
-    open func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        var result = false
-        for service in __services {
-            if service.application?(application, open: url, sourceApplication: sourceApplication, annotation: annotation) ?? false {
-                result = true
-            }
-        }
-        return result
-    }
-    
     @available(iOS 9.0, *)
     open func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         var result = false
@@ -170,27 +148,6 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-//    open func application(_ application: UIApplication, willChangeStatusBarFrame newStatusBarFrame: CGRect) {
-//        for service in __services {
-//            service.application?(application, willChangeStatusBarFrame: newStatusBarFrame)
-//        }
-//    }
-//
-//    open func application(_ application: UIApplication, didChangeStatusBarFrame oldStatusBarFrame: CGRect) {
-//        for service in __services {
-//            service.application?(application, didChangeStatusBarFrame: oldStatusBarFrame)
-//        }
-//    }
-    
-    
-    // This callback will be made upon calling -[UIApplication registerUserNotificationSettings:]. The settings the user has granted to the application will be passed in as the second argument.
-    @available(iOS, introduced: 8.0, deprecated: 10.0, message: "Use UserNotification UNNotification Settings instead")
-    open func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
-        for service in __services {
-            service.application?(application, didRegister: notificationSettings)
-        }
-    }
-    
     
     @available(iOS 3.0, *)
     open func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -205,68 +162,6 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
         for service in __services {
             service.application?(application, didFailToRegisterForRemoteNotificationsWithError: error)
         }
-    }
-    
-    
-    @available(iOS, introduced: 3.0, deprecated: 10.0, message: "Use UserNotifications Framework's -[UNUserNotificationCenterDelegate willPresentNotification:withCompletionHandler:] or -[UNUserNotificationCenterDelegate didReceiveNotificationResponse:withCompletionHandler:] for user visible notifications and -[UIApplicationDelegate application:didReceiveRemoteNotification:fetchCompletionHandler:] for silent remote notifications")
-    open func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        for service in __services {
-            service.application?(application, didReceiveRemoteNotification: userInfo)
-        }
-    }
-    
-    
-    @available(iOS, introduced: 4.0, deprecated: 10.0, message: "Use UserNotifications Framework's -[UNUserNotificationCenterDelegate willPresentNotification:withCompletionHandler:] or -[UNUserNotificationCenterDelegate didReceiveNotificationResponse:withCompletionHandler:]")
-    open func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        for service in __services {
-            service.application?(application, didReceive: notification)
-        }
-    }
-    
-    
-    // Called when your app has been activated by the user selecting an action from a local notification.
-    // A nil action identifier indicates the default action.
-    // You should call the completion handler as soon as you've finished handling the action.
-    @available(iOS, introduced: 8.0, deprecated: 10.0, message: "Use UserNotifications Framework's -[UNUserNotificationCenterDelegate didReceiveNotificationResponse:withCompletionHandler:]")
-    open func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, completionHandler: @escaping () -> Swift.Void) {
-        apply({ (service, completion) -> Void? in
-            service.application?(application, handleActionWithIdentifier: identifier, for: notification, completionHandler: completion)
-        }, completionHandler: { _ in
-            completionHandler()
-        })
-    }
-    
-    
-    @available(iOS, introduced: 9.0, deprecated: 10.0, message: "Use UserNotifications Framework's -[UNUserNotificationCenterDelegate didReceiveNotificationResponse:withCompletionHandler:]")
-    open func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, forRemoteNotification userInfo: [AnyHashable : Any], withResponseInfo responseInfo: [AnyHashable : Any], completionHandler: @escaping () -> Swift.Void) {
-        apply({ (service, completionHandler) -> Void? in
-            service.application?(application, handleActionWithIdentifier: identifier, forRemoteNotification: userInfo, withResponseInfo: responseInfo, completionHandler: completionHandler)
-        }, completionHandler: { _ in
-            completionHandler()
-        })
-    }
-    
-    
-    // Called when your app has been activated by the user selecting an action from a remote notification.
-    // A nil action identifier indicates the default action.
-    // You should call the completion handler as soon as you've finished handling the action.
-    @available(iOS, introduced: 8.0, deprecated: 10.0, message: "Use UserNotifications Framework's -[UNUserNotificationCenterDelegate didReceiveNotificationResponse:withCompletionHandler:]")
-    open func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, forRemoteNotification userInfo: [AnyHashable : Any], completionHandler: @escaping () -> Swift.Void) {
-        apply({ (service, completionHandler) -> Void? in
-            service.application?(application, handleActionWithIdentifier: identifier, forRemoteNotification: userInfo, completionHandler: completionHandler)
-        }, completionHandler: { _ in
-            completionHandler()
-        })
-    }
-    
-    
-    @available(iOS, introduced: 9.0, deprecated: 10.0, message: "Use UserNotifications Framework's -[UNUserNotificationCenterDelegate didReceiveNotificationResponse:withCompletionHandler:]")
-    open func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, withResponseInfo responseInfo: [AnyHashable : Any], completionHandler: @escaping () -> Swift.Void) {
-        apply({ (service, completionHandler) -> Void? in
-            service.application?(application, handleActionWithIdentifier: identifier, for: notification, withResponseInfo: responseInfo, completionHandler: completionHandler)
-        }, completionHandler: { _ in
-            completionHandler()
-        })
     }
     
     
@@ -317,8 +212,11 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
     @available(iOS 7.0, *)
     open func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Swift.Void) {
-        apply({ (service, completionHandler) -> Void? in
-            service.application?(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
+        apply({ (service, completionHandler: @escaping ([Void]) -> Void) -> Void? in
+            let handler: () -> Void = {
+                completionHandler([])
+            }
+            return service.application?(application, handleEventsForBackgroundURLSession: identifier, completionHandler: handler)
         }, completionHandler: { _ in
             completionHandler()
         })
