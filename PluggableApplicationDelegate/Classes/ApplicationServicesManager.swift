@@ -65,7 +65,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     
     @available(iOS 6.0, *)
-    open func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    open func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         var result = false
         for service in __services {
             if service.application?(application, willFinishLaunchingWithOptions: launchOptions) ?? false {
@@ -76,7 +76,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 3.0, *)
-    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         var result = false
         for service in __services {
             if service.application?(application, didFinishLaunchingWithOptions: launchOptions) ?? false {
@@ -124,7 +124,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 9.0, *)
-    open func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    open func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         var result = false
         for service in __services {
             if service.application?(app, open: url, options: options) ?? false {
@@ -387,7 +387,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // Constants representing common extension point identifiers are provided further down.
     // If unimplemented, the default behavior is to allow the extension point identifier.
     @available(iOS 8.0, *)
-    open func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplicationExtensionPointIdentifier) -> Bool {
+    open func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplication.ExtensionPointIdentifier) -> Bool {
         var result = false
         for service in __services {
             if service.application?(application, shouldAllowExtensionPointIdentifier: extensionPointIdentifier) ?? true {
@@ -401,7 +401,8 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     @available(iOS 6.0, *)
     open func application(_ application: UIApplication, viewControllerWithRestorationIdentifierPath identifierComponents: [Any], coder: NSCoder) -> UIViewController? {
         for service in __services {
-            if let viewController = service.application?(application, viewControllerWithRestorationIdentifierPath: identifierComponents, coder: coder) {
+            if let stringComponents = identifierComponents as? [String],
+                let viewController = service.application?(application, viewControllerWithRestorationIdentifierPath: stringComponents, coder: coder) {
                 return viewController
             }
         }
@@ -498,10 +499,10 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     
     // This will be called on the main thread after the user indicates they want to accept a CloudKit sharing invitation in your application.
-    // You should use the CKShareMetadata object's shareURL and containerIdentifier to schedule a CKAcceptSharesOperation, then start using
+    // You should use the CKShare.Metadata object's shareURL and containerIdentifier to schedule a CKAcceptSharesOperation, then start using
     // the resulting CKShare and its associated record(s), which will appear in the CKContainer's shared database in a zone matching that of the record's owner.
     @available(iOS 10.0, *)
-    open func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata) {
+    open func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
         for service in __services {
             service.application?(application, userDidAcceptCloudKitShareWith: cloudKitShareMetadata)
         }
