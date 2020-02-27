@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PluggableApplicationDelegate'
-  s.version          = '0.3.0'
+  s.version          = '0.3.1'
   s.summary          = 'Services oriented AppDelegate in Swift 5.'
   s.description      = <<-DESC
 PluggableApplicationDelegate is a way of decoupling AppDelegate, by splitting it into small modules called ApplicationService.
