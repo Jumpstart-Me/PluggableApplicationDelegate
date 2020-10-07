@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PluggableApplicationDelegate'
-  s.version          = '0.3.1'
+  s.version          = '0.3.2'
   s.summary          = 'Services oriented AppDelegate in Swift 5.'
   s.description      = <<-DESC
 PluggableApplicationDelegate is a way of decoupling AppDelegate, by splitting it into small modules called ApplicationService.
@@ -21,7 +21,7 @@ PluggableApplicationDelegate is an open class from which your AppDelegate needs 
   s.author           = { 'dgattey' => 'dylan@jumpstart.me' }
   s.source           = { :git => 'https://github.com/Jumpstart-Me/PluggableApplicationDelegate.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'PluggableApplicationDelegate/Classes/**/*'
   
